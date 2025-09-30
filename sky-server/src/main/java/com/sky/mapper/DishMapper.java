@@ -32,4 +32,11 @@ public interface DishMapper {
      */
     @AutoFill(value = OperationType.UPDATE)
     void update(Dish dish);
+
+    /**
+     * 新增菜品
+     * @param dish
+     */
+    @AutoFill(value = OperationType.INSERT)
+    void insert(Dish dish);
 }

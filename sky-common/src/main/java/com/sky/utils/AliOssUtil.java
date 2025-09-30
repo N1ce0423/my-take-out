@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -64,5 +65,18 @@ public class AliOssUtil {
         log.info("文件上传到:{}", stringBuilder.toString());
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * 生成文件名
+     * @param originalFilename
+     * @return
+     */
+    public String getFileName(String originalFilename) {
+        // 1. 获取文件后缀名
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        // 2. 生成新的文件名
+        return UUID.randomUUID() + suffix;
+
     }
 }

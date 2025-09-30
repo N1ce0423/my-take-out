@@ -24,9 +24,6 @@
             <if test="price != null">
                 price = #{price},
             </if>
-            <if test="code != null">
-                code = #{code},
-            </if>
             <if test="image != null">
                 image = #{image},
             </if>
@@ -45,4 +42,9 @@
         </set>
         where id = #{id}
     </update>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into dish(name, category_id, price, image, description, status, create_time, create_user, update_time, update_user)
+            values(#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser})
+    </insert>
 </mapper>

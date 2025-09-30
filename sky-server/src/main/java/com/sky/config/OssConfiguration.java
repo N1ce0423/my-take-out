@@ -13,6 +13,7 @@ public class OssConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AliOssUtil aliOssUtil(AliOssProperties aliOssProperties) {
+        log.info("AliOssUtil init:{}",  aliOssProperties);
         return new AliOssUtil(aliOssProperties.getEndpoint(),
                 aliOssProperties.getAccessKeyId(),
                 aliOssProperties.getAccessKeySecret(),
