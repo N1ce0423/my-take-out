@@ -33,12 +33,6 @@
             <if test="status != null">
                 status = #{status},
             </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime},
-            </if>
-            <if test="updateUser != null">
-                update_user = #{updateUser},
-            </if>
         </set>
         where id = #{id}
     </update>
@@ -47,4 +41,11 @@
         insert into dish(name, category_id, price, image, description, status, create_time, create_user, update_time, update_user)
             values(#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{createUser}, #{updateTime}, #{updateUser})
     </insert>
+
+    <delete id="deleteByIds">
+        delete from dish where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>
