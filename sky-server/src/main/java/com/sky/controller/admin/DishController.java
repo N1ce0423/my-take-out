@@ -12,10 +12,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/dish")
@@ -25,6 +27,8 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 分类分页查询
      */
@@ -45,6 +49,10 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+
+        String key = "dish_" + dishDTO.getCategoryId();
+        cleanCache(key);
+
         return Result.success();
     }
 
@@ -59,6 +67,9 @@ public class DishController {
     public Result startOrStop(@PathVariable Integer status, Long id) {
         log.info("修改菜品状态：status={}, id={}", status, id);
         dishService.startOrStop(status, id);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -72,6 +83,9 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("删除菜品：ids={}", ids);
         dishService.deleteBatch(ids);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
@@ -87,23 +101,53 @@ public class DishController {
         return Result.success(dishVO);
     }
 
+    /**
+     * 修改菜品
+     * @param dishDTO
+     * @return
+     */
     @PutMapping
     @ApiOperation(value = "修改菜品")
     public Result update(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+
+        cleanCache("dish_*");
+
         return Result.success();
     }
 
+    /**
+     * 根据分类ID查询菜品
+     * @param categoryId
+     * @return
+     */
     @GetMapping("/list")
     @ApiOperation("根据分类ID查询菜品")
     public Result<List<DishVO>> list(@RequestParam Long categoryId){
         log.info("根据分类ID查询菜品：categoryId={}", categoryId);
+
+        String key = "dish_" + categoryId;
+        List<DishVO> list = (List<DishVO>) redisTemplate.opsForValue().get(key);
+
+        if(list != null){
+            return Result.success(list);
+        }
+
         Dish dish = new Dish();
         dish.setCategoryId(categoryId);
         dish.setStatus(StatusConstant.ENABLE);
+        list = dishService.listWithFlavor(dish);
+        redisTemplate.opsForValue().set(key, list);
+        return Result.success(list);
+    }
 
-        List<DishVO> dishVOS = dishService.listWithFlavor(dish);
-        return Result.success(dishVOS);
+    /**
+     * 清理缓存
+     * @param pattern
+     */
+    private void cleanCache(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }

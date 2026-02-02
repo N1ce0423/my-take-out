@@ -13,8 +13,8 @@
     <insert id="insertBatch" parameterType="java.util.List">
         insert into setmeal_dish (setmeal_id, dish_id, name, price, copies)
         values
-        <foreach collection="setmealDishes" item="setmealDishe" separator=",">
-            (#{setmealDishe.setmealId}, #{setmealDishe.dishId}, #{setmealDishe.name}, #{setmealDishe.price}, #{setmealDishe.copies})
+        <foreach collection="setmealDishes" item="setmealDish" separator=",">
+            (#{setmealDish.setmealId}, #{setmealDish.dishId}, #{setmealDish.name}, #{setmealDish.price}, #{setmealDish.copies})
         </foreach>
     </insert>
 </mapper>

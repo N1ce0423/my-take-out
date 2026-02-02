@@ -2,14 +2,12 @@ package com.sky.mapper;
 
 import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
+import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishItemVO;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Set;
@@ -57,6 +55,7 @@ public interface SetmealMapper {
     @AutoFill(value = OperationType.INSERT)
     @Insert("insert into setmeal (name, category_id, price, status, description, image, create_time, update_time, create_user, update_user) " +
             "values (#{name}, #{categoryId}, #{price}, #{status}, #{description}, #{image}, now(), now(), #{createUser}, #{updateUser})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Setmeal setmeal);
 
     /**
@@ -77,4 +76,13 @@ public interface SetmealMapper {
             "</foreach>" +
             "</script>")
     void deleteBatch(List<Long> ids);
+
+    /**
+     * 修改套餐信息
+     * @param setmeal
+     */
+    @Update("update setmeal set name = #{name}, category_id = #{categoryId}, price = #{price}, status = #{status}, " +
+            "description = #{description}, image = #{image}" +
+            "where id = #{id}")
+    void update(Setmeal setmeal);
 }

@@ -6,6 +6,7 @@ import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishItemVO;
+import com.sky.vo.SetmealVO;
 
 import java.util.List;
 
@@ -44,4 +45,24 @@ public interface SetmealService {
      * @param ids
      */
     void deleteWithDish(List<Long> ids);
+
+    /**
+     * 根据id查询套餐信息和对应的菜品信息
+     * @param id
+     * @return
+     */
+    SetmealVO getSetById(Long id);
+
+    /**
+     * 修改套餐，同时修改套餐和菜品的关联关系
+     * @param setmealDTO
+     */
+    void updateWithDish(SetmealDTO setmealDTO);
+
+    /**
+     * 起售或停售套餐
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }
