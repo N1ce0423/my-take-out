@@ -8,4 +8,9 @@
         values (#{openid},#{name}, #{phone}, #{sex}, #{idNumber}, #{createTime}, #{avatar})
     </insert>
 
+    <select id="getUserNumByDate" resultType="int">
+        SELECT COUNT(*)
+        FROM user
+        WHERE create_time &lt; #{dateTime}
+    </select>
 </mapper>
